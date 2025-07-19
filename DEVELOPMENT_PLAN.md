@@ -84,14 +84,68 @@ By implementing these recommendations, the AI Data Analyst framework will become
     *   Agents now provide accurate Agent Cards via `/agent_card` endpoint
     *   Orchestrator can discover agents by capability dynamically
 
+6.  **Security for Inter-Agent Calls** - Completed comprehensive security implementation:
+    *   Enhanced SecurityManager with API key authentication for inter-agent calls
+    *   Created AgentSecurityHelper for easy security integration
+    *   Updated BaseAgentServer to validate API keys on incoming requests
+    *   Enhanced orchestrator to include API keys in outgoing requests
+    *   Added audit logging for all security events and inter-agent communications
+    *   Implemented IP-based filtering for internal vs external requests
+    *   Backward compatibility maintained for legacy systems
+
+7.  **Concurrency Improvements** - Completed concurrency enhancements:
+    *   Refactored orchestrator's agent health checks to run in parallel using `asyncio.gather`, significantly speeding up system readiness checks.
+    *   Added a new `orchestrate_parallel_analysis_skill` to the orchestrator to demonstrate how independent analysis tasks (e.g., schema profiling and root cause analysis) can be executed concurrently.
+    *   This serves as a blueprint for future optimizations of complex, multi-stage workflows.
+
 ### In Progress 🔄
 
-6.  **Security for Inter-Agent Calls** - Implementing enhanced security:
+8.  **Observability & Metrics** - Implementing OpenTelemetry tracing and Prometheus metrics.
 
 ### Next Steps 📋
 
-*   Complete the migration of all agents.
-*   Implement dynamic agent discovery using Agent Cards.
-*   Strengthen inter-agent security.
-*   Improve concurrency in the orchestrator.
-*   Enhance observability with detailed tracing and metrics. 
+*   Complete observability and metrics implementation.
+*   Implement a dedicated MCP Server Layer for tool integration.
+*   Implement Advanced Context & State Management.
+*   Develop a comprehensive containerization and deployment strategy.
+
+## 9. Advanced Architectural Enhancements (from Review)
+
+To further evolve the framework towards a state-of-the-art, production-grade system, the following architectural enhancements will be implemented.
+
+### 9.1. Implement a Dedicated MCP Server Layer
+**Status: ✅ In Progress & Validated**
+
+-   **Task**: Develop one or more lightweight MCP servers that expose internal APIs (e.g., database connectors) and external tools (e.g., statistical libraries, visualization engines) as standardized "tools." - **✅ Done. Created a generic `McpToolServer` in `common_utils`.**
+-   **Task**: Define clear, versioned schemas for each tool's functions, inputs, and outputs. - **✅ Done. The `BaseTool` class now auto-generates schemas from method signatures.**
+-   **Task**: Implement robust authentication and authorization at the MCP server level to control agent access to specific tools. - **✅ Done. The `McpToolServer` is integrated with the `SecurityManager` for API key validation.**
+-   **Task**: Refactor specialized agents (`DataPreprocessingAgent`, `StatisticalAnalysisAgent`, etc.) to act as MCP clients, invoking tools through the standardized MCP server layer. - **✅ Done (Proof-of-Concept). Refactored the `data-cleaning-agent`:**
+    -   Extracted its logic into a `CleaningTool`.
+    -   Created a dedicated MCP server to host this tool.
+    -   The agent's executor is now a lightweight client that securely calls the tool server.
+    -   This validates the architecture for the remaining agents.
+
+### 9.2. Implement Advanced Context & State Management
+To support complex, multi-turn analysis and long-term memory, a more sophisticated context management system based on ADK principles will be implemented.
+
+-   **Task**: Create a `Session` object to encapsulate each unique data analysis request, managing its lifecycle, history, and metadata.
+-   **Task**: Utilize a mutable `State` object within each session to store temporary, short-term information (e.g., current dataset, intermediate results) that is passed between agents.
+-   **Task**: Integrate a persistent `MemoryService` for long-term recall of user preferences, analysis patterns, and historical results across sessions. This may involve a vector database or a traditional database.
+-   **Task**: Log every significant interaction (user messages, tool calls, state changes, errors) as an immutable `Event` to create a comprehensive audit trail for debugging and compliance.
+
+## 10. Deployment Strategy
+
+To ensure scalability, high availability, and simplified management in a production environment, the following deployment strategy will be adopted.
+
+-   **Task**: Containerize each specialized agent into a self-contained Docker image.
+-   **Task**: Develop configurations for deploying individual agents and MCP servers to a serverless platform (e.g., Google Cloud Run) to enable automatic scaling.
+-   **Task**: Create a comprehensive `docker-compose.yaml` for easy local deployment and testing of the entire multi-agent system.
+-   **Task**: Implement secure credential management using a dedicated service (e.g., Google Cloud Secret Manager, HashiCorp Vault) to avoid hardcoding secrets.
+
+## 11. Future Directions
+
+To ensure the long-term evolution and competitiveness of the framework, the following future initiatives will be explored after the core architectural enhancements are complete.
+
+-   **Advanced Memory Patterns**: Investigate the use of knowledge graphs (e.g., via Google Cloud Spanner) to enable agents to build a more complex understanding of data relationships and analytical insights over time.
+-   **Continuous Learning Mechanisms**: Explore mechanisms for agents to learn and adapt from new data, user feedback, and the outcomes of their analyses to improve performance and autonomy.
+-   **Deeper Enterprise Integration**: Plan for future integrations with broader enterprise systems, such as CRMs and ERPs, to enable end-to-end automated analytical workflows. 

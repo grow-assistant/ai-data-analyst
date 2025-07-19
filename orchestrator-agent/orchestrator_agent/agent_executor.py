@@ -28,6 +28,20 @@ class OrchestratorAgentExecutor:
     def __init__(self):
         self.data_manager = get_data_handle_manager()
         
+        # Initialize security for inter-agent calls
+        try:
+            from common_utils.security import security_manager
+            self.security_manager = security_manager
+            self.orchestrator_api_key = self.security_manager.get_agent_api_key("orchestrator")
+            if not self.orchestrator_api_key:
+                # Register if not exists
+                self.orchestrator_api_key = self.security_manager.register_agent_api_key("orchestrator")
+            logger.info("Orchestrator security initialized with API key authentication")
+        except Exception as e:
+            logger.warning(f"Failed to initialize security manager: {e}")
+            self.security_manager = None
+            self.orchestrator_api_key = None
+        
         # Load agent endpoints from configuration and discovery
         try:
             from common_utils import get_agent_endpoints, get_agent_registry
@@ -287,20 +301,25 @@ class OrchestratorAgentExecutor:
             logger.exception(error_msg)
             return workflow_results
 
-    async def _check_agent_health(self) -> Dict[str, int]:
-        """Check which agents are healthy and available."""
-        healthy_agents = {}
+    async def _check_agent_health(self) -> Dict[str, str]:
+        """Check which agents are healthy and available concurrently."""
         
-        for agent_name, endpoint in self.agent_endpoints.items():
+        async def check(agent_name: str, endpoint: str):
             try:
                 async with httpx.AsyncClient(timeout=5.0) as client:
                     response = await client.get(f"{endpoint}/health")
                     if response.status_code == 200:
-                        healthy_agents[agent_name] = endpoint
                         logger.debug(f"Agent {agent_name} is healthy")
+                        return agent_name, endpoint
             except Exception as e:
                 logger.debug(f"Agent {agent_name} not reachable: {e}")
+            return None
+
+        tasks = [check(name, endpoint) for name, endpoint in self.agent_endpoints.items()]
+        results = await asyncio.gather(*tasks)
         
+        healthy_agents = {name: endpoint for name, endpoint in results if name}
+        logger.info(f"Health check complete. Active agents: {list(healthy_agents.keys())}")
         return healthy_agents
 
     def _resolve_file_path(self, file_path: str) -> Path:
@@ -367,7 +386,7 @@ class OrchestratorAgentExecutor:
                 await asyncio.sleep(1)  # Wait before retry
 
     async def _make_agent_call(self, agent_url: str, method: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Make actual HTTP call to agent."""
+        """Make actual HTTP call to agent with security headers."""
         payload = {
             "jsonrpc": "2.0",
             "method": method,
@@ -375,10 +394,15 @@ class OrchestratorAgentExecutor:
             "id": 1
         }
         
+        # Prepare security headers
+        headers = {"Content-Type": "application/json"}
+        if self.orchestrator_api_key:
+            headers["X-API-Key"] = self.orchestrator_api_key
+        
         timeout = httpx.Timeout(600.0)  # 10 minutes for large files
         
         async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(agent_url, json=payload)
+            response = await client.post(agent_url, json=payload, headers=headers)
             response.raise_for_status()
             
             result = response.json()
@@ -639,12 +663,100 @@ class OrchestratorAgentExecutor:
             "id": f"orchestrator_{agent_name}_{skill_name}",
         }
 
+        # Prepare security headers
+        headers = {"Content-Type": "application/json"}
+        if self.orchestrator_api_key:
+            headers["X-API-Key"] = self.orchestrator_api_key
+
         async with httpx.AsyncClient() as client:
-            response = await client.post(endpoint, json=request_payload, timeout=300.0)  # 5 minutes for large files
+            response = await client.post(endpoint, json=request_payload, headers=headers, timeout=300.0)  # 5 minutes for large files
             response.raise_for_status()
             response_data = response.json()
             
             if "error" in response_data:
                 raise ValueError(f"Agent {agent_name} returned error: {response_data['error']}")
             
-            return response_data.get("result", {}) 
+            return response_data.get("result", {})
+
+    async def orchestrate_parallel_analysis_skill(self, data_handle_id: str) -> Dict[str, Any]:
+        """
+        Orchestrates multiple independent analyses in parallel to improve performance.
+        """
+        logger.info(f"🎯 Starting parallel analysis for data handle: {data_handle_id}")
+
+        results = {
+            "pipeline_id": str(uuid.uuid4()),
+            "data_handle_id": data_handle_id,
+            "started_at": datetime.now().isoformat(),
+            "analyses": {}
+        }
+
+        try:
+            # Define a set of independent analyses to run in parallel
+            analysis_tasks = {
+                "comprehensive_analysis": {
+                    "agent": "data_analyst",
+                    "skill": "comprehensive_analysis",
+                    "params": {"data_handle_id": data_handle_id}
+                },
+                "root_cause_analysis": {
+                    "agent": "rootcause_analyst",
+                    "skill": "investigate_trend",
+                    "params": {"analysis_handle_id": None} # Depends on comprehensive analysis
+                },
+                "schema_profile": {
+                    "agent": "schema_profiler",
+                    "skill": "ai_profile_dataset",
+                    "params": {"data_handle_id": data_handle_id}
+                }
+            }
+
+            # First, run the comprehensive analysis to get its handle
+            comp_analysis_response = await self._call_agent(
+                analysis_tasks["comprehensive_analysis"]["agent"],
+                analysis_tasks["comprehensive_analysis"]["skill"],
+                analysis_tasks["comprehensive_analysis"]["params"]
+            )
+
+            if comp_analysis_response.get("status") != "completed":
+                raise ValueError("Comprehensive analysis failed, halting parallel execution.")
+
+            analysis_handle = comp_analysis_response.get("analysis_data_handle_id")
+            results["analyses"]["comprehensive_analysis"] = {
+                "status": "completed",
+                "handle": analysis_handle,
+            }
+            # Update the params for root cause analysis
+            analysis_tasks["root_cause_analysis"]["params"]["analysis_handle_id"] = analysis_handle
+
+            # Now, create tasks for the remaining parallelizable analyses
+            concurrent_tasks = [
+                self._call_agent(
+                    details["agent"],
+                    details["skill"],
+                    details["params"]
+                ) for name, details in analysis_tasks.items() if name != "comprehensive_analysis"
+            ]
+            
+            # Execute tasks concurrently
+            task_results = await asyncio.gather(*concurrent_tasks, return_exceptions=True)
+
+            # Process results
+            parallel_task_names = [name for name in analysis_tasks if name != "comprehensive_analysis"]
+            for name, result in zip(parallel_task_names, task_results):
+                if isinstance(result, Exception):
+                    logger.error(f"Parallel analysis task '{name}' failed: {result}")
+                    results["analyses"][name] = {"status": "error", "error": str(result)}
+                else:
+                    results["analyses"][name] = {"status": "completed", "result": result}
+            
+            results["status"] = "completed"
+            results["completed_at"] = datetime.now().isoformat()
+            
+            return results
+
+        except Exception as e:
+            logger.exception(f"Parallel analysis pipeline failed: {e}")
+            results["status"] = "error"
+            results["error"] = str(e)
+            return results 

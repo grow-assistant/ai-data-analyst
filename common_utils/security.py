@@ -320,7 +320,11 @@ class SecurityManager:
         self.oauth2_manager = OAuth2Manager()
         self.acl_manager = AccessControlManager()
         self.audit_logger = AuditLogger()
+        # API keys for inter-agent communication
+        self.api_keys: Dict[str, str] = {}  # api_key -> agent_id
+        self.agent_api_keys: Dict[str, str] = {}  # agent_id -> api_key
         self._setup_default_permissions()
+        self._setup_default_api_keys()
     
     def _setup_default_permissions(self):
         """Setup default ACL permissions."""
@@ -340,6 +344,70 @@ class SecurityManager:
         
         # Orchestrator permissions (admin access)
         self.acl_manager.set_default_permissions("*", [PermissionLevel.ADMIN, PermissionLevel.READ, PermissionLevel.WRITE, PermissionLevel.EXECUTE])
+    
+    def _setup_default_api_keys(self):
+        """Setup default API keys for inter-agent communication."""
+        # Generate secure API keys for each agent
+        default_agents = [
+            "orchestrator", "data_loader", "data_cleaning", "data_enrichment", 
+            "data_analyst", "presentation", "rootcause_analyst", "schema_profiler"
+        ]
+        
+        for agent_name in default_agents:
+            api_key = f"a2a-{agent_name}-{secrets.token_urlsafe(32)}"
+            self.api_keys[api_key] = agent_name
+            self.agent_api_keys[agent_name] = api_key
+            logger.debug(f"Generated API key for agent: {agent_name}")
+    
+    def register_agent_api_key(self, agent_id: str, api_key: str = None) -> str:
+        """Register or generate an API key for an agent."""
+        if not api_key:
+            api_key = f"a2a-{agent_id}-{secrets.token_urlsafe(32)}"
+        
+        # Remove old key if exists
+        old_key = self.agent_api_keys.get(agent_id)
+        if old_key and old_key in self.api_keys:
+            del self.api_keys[old_key]
+        
+        self.api_keys[api_key] = agent_id
+        self.agent_api_keys[agent_id] = api_key
+        
+        logger.info(f"Registered API key for agent: {agent_id}")
+        return api_key
+    
+    def validate_api_key(self, api_key: str) -> Optional[str]:
+        """Validate API key and return associated agent ID."""
+        if not api_key:
+            return None
+        
+        agent_id = self.api_keys.get(api_key)
+        if agent_id:
+            logger.debug(f"Valid API key for agent: {agent_id}")
+            return agent_id
+        else:
+            logger.warning(f"Invalid API key attempted: {api_key[:10]}...")
+            return None
+    
+    def get_agent_api_key(self, agent_id: str) -> Optional[str]:
+        """Get API key for an agent."""
+        return self.agent_api_keys.get(agent_id)
+    
+    async def validate_inter_agent_request(self, api_key: str, source_agent: str, target_resource: str) -> bool:
+        """Validate inter-agent API request."""
+        agent_id = self.validate_api_key(api_key)
+        if not agent_id:
+            await self.audit_logger.log_action("unknown", "inter_agent_auth", target_resource, "failure", 
+                                              {"reason": "invalid_api_key"})
+            return False
+        
+        if agent_id != source_agent:
+            await self.audit_logger.log_action(agent_id, "inter_agent_auth", target_resource, "failure",
+                                              {"reason": "agent_mismatch", "claimed_agent": source_agent})
+            return False
+        
+        # Log successful authentication
+        await self.audit_logger.log_action(agent_id, "inter_agent_auth", target_resource, "success")
+        return True
     
     async def authenticate_agent(self, client_id: str, client_secret: str) -> Optional[OAuthToken]:
         """Authenticate agent and return OAuth token."""
