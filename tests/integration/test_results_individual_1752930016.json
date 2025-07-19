@@ -1,0 +1,138 @@
+{
+  "test_suite": "individual_agents",
+  "timestamp": 1752930002.6360033,
+  "results": [
+    {
+      "agent": "orchestrator_agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "api_endpoints",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "agent": "Data Loader Agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "load_dataset_skill",
+          "passed": true
+        }
+      ],
+      "data_handle": {
+        "status": "completed",
+        "data_handle_id": "b7b03886-2553-43d5-a315-3814c06301d2",
+        "metadata": {
+          "source_file": "C:\\Users\\fnpprod\\AppData\\Local\\Temp\\tmp0f2nmelp.csv",
+          "file_type": ".csv",
+          "rows": 100,
+          "columns": [
+            "date",
+            "revenue",
+            "region",
+            "product",
+            "sales_rep"
+          ]
+        },
+        "message": "Successfully loaded 100 rows."
+      }
+    },
+    {
+      "agent": "data_cleaning_agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "capabilities",
+          "passed": false
+        },
+        {
+          "test": "clean_dataset_skill",
+          "passed": true
+        }
+      ],
+      "cleaned_data_handle": {
+        "status": "completed",
+        "cleaned_data_handle_id": "6d1c8a71-83c9-4eaf-8732-7c23605ae957",
+        "original_shape": [
+          100,
+          5
+        ],
+        "cleaned_shape": [
+          100,
+          5
+        ],
+        "operations": [
+          "remove_duplicates",
+          "handle_missing_values"
+        ],
+        "summary": {
+          "duplicates_removed": 0,
+          "missing_values_filled": 0
+        },
+        "message": "Successfully cleaned dataset with 2 operations."
+      }
+    },
+    {
+      "agent": "data_enrichment_agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "capabilities",
+          "passed": false
+        },
+        {
+          "test": "enrich_dataset_skill",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "agent": "data_analyst_agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "capabilities",
+          "passed": false
+        },
+        {
+          "test": "analyze_dataset_skill",
+          "passed": false
+        }
+      ]
+    },
+    {
+      "agent": "presentation_agent",
+      "tests": [
+        {
+          "test": "health_check",
+          "passed": true
+        },
+        {
+          "test": "capabilities",
+          "passed": false
+        },
+        {
+          "test": "create_report_skill",
+          "passed": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "data-analyst-agent"
+version = "0.1.0"
+description = "An agent for performing statistical analysis on datasets."
+authors = ["Your Name <you@example.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "data_analyst"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+google-adk = { version = "^1.2.0", extras = ["mcp"] }
+pandas = "^2.2.0"
+numpy = "*"
+scipy = "^1.14.0"
+pyyaml = "^6.0"
+fastapi = "^0.115.0"
+uvicorn = "^0.34.0"
+google-cloud-aiplatform = { extras = ["adk", "agent-engines"], version = "^1.93.0" }
+pydantic = "^2.10.6"
+python-dotenv = "^1.0.1"
+google-genai = "^1.16.1"
+httpx = "^0.28.0"
+aiohttp = "^3.10.0"
+sse-starlette = "^2.3.0"
+pyjwt = "^2.10.0"
+jwcrypto = "^1.5.0"
+a2a-sdk = "^0.2.12"
+litellm = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-asyncio = "^0.26.0"
+psutil = "^5.9.0"
+requests = "^2.31.0"
+
+[tool.poetry.group.deployment]
+optional = true
+
+[tool.poetry.group.deployment.dependencies]
+absl-py = "^2.2.1"
+cloudpickle = "^3.1.1"
+flake8-pyproject = "^1.2.3"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "data-analyst-agent"
+version = "0.1.0"
+dependencies = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "scikit-learn>=1.3.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "plotly>=5.15.0",
+    "a2a-sdk>=0.2.12",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
+    "httpx>=0.28.0",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.0.1",
+    "tableauhyperapi>=0.0.20063",
+]
+
+[project.scripts]
+start = "data_analyst.__main__:main" 

@@ -1,0 +1,18 @@
+"""
+Data Analyst Agent
+This module defines the top-level agent components.
+The agent's business logic is implemented in the `DataAnalystAgentExecutor`.
+"""
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+# The logic that was previously in this file has been moved to
+# `agent_executor.py` to better align with the a2a-sdk structure.
+
+# The `__main__.py` script now directly uses the `DataAnalystAgentExecutor`
+# to create the A2A server and its skills. This file is kept for
+# package structure but is no longer the primary implementation file.
+
+logger.info("Data Analyst Agent package loaded. See agent_executor.py for implementation.")

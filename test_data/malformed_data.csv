@@ -1,0 +1,5 @@
+date,revenue,region,special_chars,mixed_types
+2023-01-01,1000,North,normal,1
+2023-01-02,,,"with,comma",2
+invalid-date,not_a_number,,"with""quote",3.5
+2023-01-04,1500,InvalidRegion,with	tab,four

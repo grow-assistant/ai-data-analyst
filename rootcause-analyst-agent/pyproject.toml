@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rootcause-analyst-agent"
+version = "2.0.0"
+description = "Enhanced RootCause Analyst Agent (Why-Bot) with Google Gemini AI for A2A Multi-Agent Framework"
+authors = [
+    {name = "A2A Framework Team", email = "team@a2a-framework.com"}
+]
+dependencies = [
+    # Core framework dependencies
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
+    "httpx>=0.28.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.0.1",
+    
+    # Enhanced AI capabilities  
+    "google-generativeai>=0.8.0",
+    "openai>=1.0.0",
+    
+    # Statistical analysis and causal inference
+    "statsmodels>=0.14.0",
+    "scipy>=1.11.0",
+    "scikit-learn>=1.3.0",
+    "dowhy>=0.11.0",
+    "econml>=0.15.0",
+    
+    # Visualization
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "plotly>=5.15.0",
+    
+    # Configuration and utilities
+    "pyyaml>=6.0",
+    "jinja2>=3.1.0",
+    "markdown>=3.5.0",
+    
+    # Reporting
+    "reportlab>=4.0.0",
+    "weasyprint>=60.0",
+    
+    # A2A framework integration
+    "a2a-sdk>=0.2.12",
+]
+
+[project.scripts]
+start = "rootcause_analyst.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rootcause_analyst*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true 

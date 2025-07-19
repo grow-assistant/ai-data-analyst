@@ -1,0 +1,10 @@
+{
+  "aiVerbosity": "concise",
+  "linting": "eslint",
+  "formatting": "prettier",
+  "extensions": ["tailwindcss", "graphql"],
+  "performance": {
+    "memory": "high",
+    "optimizeForLargeFiles": true
+  }
+}
