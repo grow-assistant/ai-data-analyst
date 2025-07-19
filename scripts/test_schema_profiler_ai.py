@@ -12,7 +12,7 @@ import json
 import sys
 
 # Add parent directory for common_utils access
-parent_dir = Path(__file__).resolve().parent
+parent_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(parent_dir))
 
 from common_utils.data_handle_manager import get_data_handle_manager

@@ -45,7 +45,17 @@ foreach ($agent in $agents) {
     
     try {
         # Start the agent in a new PowerShell window
-        $startCommand = "python -m $($agent.Path.Replace('-', '_')) 2>&1 | Tee-Object -FilePath ../logs/$($agent.Path)_$((Get-Date).ToString('yyyyMMdd_HHmmss')).log"
+        $moduleName = switch ($agent.Path) {
+            "data-loader-agent" { "data_loader" }
+            "data-analyst-agent" { "data_analyst" }
+            "data-cleaning-agent" { "data_cleaning_agent" }
+            "data-enrichment-agent" { "data_enrichment_agent" }
+            "presentation-agent" { "presentation_agent" }
+            "rootcause-analyst-agent" { "rootcause_analyst" }
+            "schema-profiler-agent" { "schema_profiler" }
+            "orchestrator-agent" { "orchestrator_agent" }
+        }
+        $startCommand = "python -m $moduleName 2>&1 | Tee-Object -FilePath ../logs/$($agent.Path)_$((Get-Date).ToString('yyyyMMdd_HHmmss')).log"
         
         Start-Process powershell -ArgumentList "-NoExit", "-Command", $startCommand -WindowStyle Minimized
         
@@ -78,8 +88,8 @@ Write-Host "   * Smart Escalation - Automatic low-confidence flagging" -Foregrou
 Write-Host ""
 Write-Host "Next Steps:" -ForegroundColor Cyan
 Write-Host "   1. Wait 30 seconds for all agents to fully initialize" -ForegroundColor White
-Write-Host "   2. Check status: python tdsx_cli.py --check" -ForegroundColor White
-Write-Host "   3. Run analysis: python tdsx_cli.py your_data_file.csv" -ForegroundColor White
+Write-Host "   2. Check status: python scripts/framework_cli.py --check" -ForegroundColor White
+Write-Host "   3. Run analysis: python scripts/framework_cli.py your_data_file.csv" -ForegroundColor White
 Write-Host "   4. View logs in ./logs/ directory" -ForegroundColor White
 
 Write-Host ""

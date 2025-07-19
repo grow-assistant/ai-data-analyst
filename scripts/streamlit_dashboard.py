@@ -9,11 +9,15 @@ import httpx
 import json
 import asyncio
 import os
+import sys
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 import pandas as pd
 from datetime import datetime
 import time
+
+# Add parent directory to Python path to import common_utils
+sys.path.append(str(Path(__file__).parent.parent))
 from common_utils.output_manager import output_manager
 
 # Configure page

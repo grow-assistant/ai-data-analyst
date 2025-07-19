@@ -5,7 +5,12 @@ This directory contains utility scripts and tools for the Multi-Agent Data Analy
 ## 📋 Available Scripts
 
 ### 🚀 Dashboard & UI Scripts
-- **`run_dashboard.py`**: Streamlit dashboard launcher with automatic dependency installation
+- **`launch_dashboard.py`**: Robust dashboard launcher with path and dependency management
+  - Automatically handles Python path configuration
+  - Checks and installs missing dependencies
+  - Usage: `python scripts/launch_dashboard.py`
+
+- **`run_dashboard.py`**: Original Streamlit dashboard launcher
   - Provides web interface for interactive data analysis
   - Auto-installs required packages if missing
   - Usage: `python scripts/run_dashboard.py`
