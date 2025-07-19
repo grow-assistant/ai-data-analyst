@@ -16,6 +16,9 @@ from . import security
 from . import agent_security
 from .mcp_server import tool_server
 from . import session_manager
+from . import observability
+from . import enhanced_logging
+from . import workflow_manager
 # A2A imports removed - deprecated in favor of MCP
 
 # Export key classes for easy access
@@ -26,5 +29,8 @@ from .agent_security import AgentSecurityHelper, get_agent_security_helper, crea
 from .security import SecurityManager, security_manager
 from .mcp_server.tool_server import BaseTool, McpToolServer, ToolInput, ToolDefinition
 from .session_manager import SessionManager, get_session_manager, Session, State, Event
+from .observability import ObservabilityManager, get_observability_manager, trace_operation, instrument
+from .enhanced_logging import get_logger, logging_context, correlated_operation, add_logging_context
+from .workflow_manager import WorkflowManager, get_workflow_manager, WorkflowDefinition, TaskDefinition
  
 __version__ = "0.1.0" 

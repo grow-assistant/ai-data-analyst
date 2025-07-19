@@ -84,8 +84,13 @@ class SessionManager:
             logger.warning(f"Session not found for state update: {session_id}")
             return None
         
-        # This is a simple merge. More complex logic could be added here.
-        session.state.model_dump().update(updates)
+        # Update state fields directly
+        for key, value in updates.items():
+            if hasattr(session.state, key):
+                setattr(session.state, key, value)
+            else:
+                logger.warning(f"Unknown state field: {key}")
+        
         session.last_updated = datetime.utcnow()
         self.add_event(session_id, "state_updated", {"updates": updates})
         self._save_session(session_id)
