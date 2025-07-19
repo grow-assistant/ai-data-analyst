@@ -28,14 +28,29 @@ class OrchestratorA2AClient:
         self.a2a_client = A2AClient()
         self.circuit_manager = get_circuit_breaker_manager()
         
-        # Map agent names to their URLs for A2A communication
-        self.agent_endpoints = {
-            "data_loader_agent": "http://localhost:10006",
-            "data_cleaning_agent": "http://localhost:10008", 
-            "data_enrichment_agent": "http://localhost:10009",
-            "data_analyst_agent": "http://localhost:10007",
-            "presentation_agent": "http://localhost:10010"
-        }
+        # Load agent endpoints from configuration
+        try:
+            from common_utils import get_agent_endpoints
+            configured_endpoints = get_agent_endpoints()
+            # Map to A2A client naming convention
+            self.agent_endpoints = {
+                "data_loader_agent": configured_endpoints.get("data_loader", "http://localhost:10006"),
+                "data_cleaning_agent": configured_endpoints.get("data_cleaning", "http://localhost:10008"), 
+                "data_enrichment_agent": configured_endpoints.get("data_enrichment", "http://localhost:10009"),
+                "data_analyst_agent": configured_endpoints.get("data_analyst", "http://localhost:10007"),
+                "presentation_agent": configured_endpoints.get("presentation", "http://localhost:10010")
+            }
+            logger.info(f"A2A Client loaded agent endpoints from configuration: {self.agent_endpoints}")
+        except Exception as e:
+            logger.warning(f"Failed to load agent endpoints from config, using defaults: {e}")
+            # Fallback to hardcoded values
+            self.agent_endpoints = {
+                "data_loader_agent": "http://localhost:10006",
+                "data_cleaning_agent": "http://localhost:10008", 
+                "data_enrichment_agent": "http://localhost:10009",
+                "data_analyst_agent": "http://localhost:10007",
+                "presentation_agent": "http://localhost:10010"
+            }
         
         # Configure circuit breakers for each agent
         self.circuit_config = CircuitBreakerConfig(

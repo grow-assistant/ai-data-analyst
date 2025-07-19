@@ -27,15 +27,96 @@ class OrchestratorAgentExecutor:
     """
     def __init__(self):
         self.data_manager = get_data_handle_manager()
-        self.agent_endpoints = {
-            "data_loader": "http://localhost:10006",
-            "data_cleaning": "http://localhost:10008", 
-            "data_enrichment": "http://localhost:10009",
-            "data_analyst": "http://localhost:10007",
-            "presentation": "http://localhost:10010",
-            "schema_profiler": "http://localhost:10012"
-        }
+        
+        # Load agent endpoints from configuration and discovery
+        try:
+            from common_utils import get_agent_endpoints, get_agent_registry
+            self.agent_endpoints = get_agent_endpoints()
+            
+            # Try to also discover agents from registry
+            try:
+                registry = get_agent_registry()
+                discovered_endpoints = registry.get_agent_endpoints()
+                # Merge discovered endpoints with configured ones
+                self.agent_endpoints.update(discovered_endpoints)
+                logger.info(f"Loaded agent endpoints from config and discovery: {self.agent_endpoints}")
+            except Exception as discovery_error:
+                logger.warning(f"Agent discovery failed: {discovery_error}")
+                logger.info(f"Using configured endpoints: {self.agent_endpoints}")
+                
+        except Exception as e:
+            logger.warning(f"Failed to load agent endpoints from config, using defaults: {e}")
+            # Fallback to hardcoded values
+            self.agent_endpoints = {
+                "data_loader": "http://localhost:10006",
+                "data_cleaning": "http://localhost:10008", 
+                "data_enrichment": "http://localhost:10009",
+                "data_analyst": "http://localhost:10007",
+                "presentation": "http://localhost:10010",
+                "schema_profiler": "http://localhost:10012",
+                "rootcause_analyst": "http://localhost:10011"
+            }
+        
         logger.info("OrchestratorAgentExecutor initialized.")
+
+    async def refresh_agent_discovery(self) -> Dict[str, Any]:
+        """Refresh agent discovery and return current agent status."""
+        try:
+            from common_utils import get_agent_registry
+            registry = get_agent_registry()
+            
+            # Perform health checks on all agents
+            health_results = await registry.health_check_all_agents()
+            
+            # Update our endpoints with discovered agents
+            discovered_endpoints = registry.get_agent_endpoints()
+            self.agent_endpoints.update(discovered_endpoints)
+            
+            # Clean up inactive agents
+            cleaned_up = registry.cleanup_inactive_agents(max_age_hours=1)
+            
+            return {
+                "status": "completed",
+                "discovered_agents": len(discovered_endpoints),
+                "health_results": health_results,
+                "cleaned_up_agents": cleaned_up,
+                "active_endpoints": self.agent_endpoints
+            }
+        except Exception as e:
+            logger.exception(f"Error refreshing agent discovery: {e}")
+            return {
+                "status": "error",
+                "error": str(e)
+            }
+
+    async def discover_agents_by_capability_skill(self, capability: str) -> Dict[str, Any]:
+        """A2A skill to discover agents that have a specific capability."""
+        try:
+            from common_utils import discover_agents_by_capability
+            
+            matching_agents = await discover_agents_by_capability(capability)
+            
+            return {
+                "status": "completed",
+                "capability": capability,
+                "matching_agents": len(matching_agents),
+                "agents": [
+                    {
+                        "name": agent["card"]["name"],
+                        "url": agent["card"]["url"],
+                        "status": agent["status"],
+                        "description": agent["card"]["description"]
+                    }
+                    for agent in matching_agents
+                ]
+            }
+        except Exception as e:
+            logger.exception(f"Error discovering agents by capability: {e}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "capability": capability
+            }
 
     async def process_tdsx_workflow_skill(self, file_path: str, profile_type: str = "comprehensive") -> Dict[str, Any]:
         """

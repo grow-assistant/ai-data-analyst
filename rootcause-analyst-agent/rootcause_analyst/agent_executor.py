@@ -231,6 +231,12 @@ class EnhancedRootCauseAnalystExecutor:
                 "analysis_handle_id": analysis_handle_id
             }
 
+    async def root_cause_analysis_skill(self, **kwargs) -> Dict[str, Any]:
+        """
+        Alias for investigate_trend_skill for clearer semantic naming.
+        """
+        return await self.investigate_trend_skill(**kwargs)
+
     async def _generate_ai_hypotheses(self, 
                                     analysis_data: Dict[str, Any], 
                                     dataset: pd.DataFrame,
