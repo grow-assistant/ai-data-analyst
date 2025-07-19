@@ -1,0 +1,75 @@
+{
+  "session_id": "sid_22b60ba88d0e4c00ab44e03084b218c5",
+  "created_at": "2025-07-19T17:53:44.786904",
+  "last_updated": "2025-07-19T17:53:44.786904",
+  "history": [
+    {
+      "event_id": "evt_2e84e9c7cb0e459cada5868043b3c222",
+      "event_type": "session_created",
+      "timestamp": "2025-07-19T17:53:44.786904",
+      "details": {
+        "metadata": {
+          "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+          "pipeline_config": {
+            "analysis_config": {
+              "focus_areas": [
+                "regional_performance",
+                "product_analysis",
+                "outlier_detection"
+              ],
+              "metrics": [
+                "revenue",
+                "units_sold",
+                "average_order_value"
+              ],
+              "dimensions": [
+                "region",
+                "product",
+                "sales_rep"
+              ]
+            },
+            "report_config": {
+              "report_type": "performance_dashboard",
+              "include_charts": true,
+              "executive_summary": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "state": {
+    "data_handles": {},
+    "user_preferences": {},
+    "intermediate_results": {},
+    "current_step": null,
+    "error_log": []
+  },
+  "metadata": {
+    "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+    "pipeline_config": {
+      "analysis_config": {
+        "focus_areas": [
+          "regional_performance",
+          "product_analysis",
+          "outlier_detection"
+        ],
+        "metrics": [
+          "revenue",
+          "units_sold",
+          "average_order_value"
+        ],
+        "dimensions": [
+          "region",
+          "product",
+          "sales_rep"
+        ]
+      },
+      "report_config": {
+        "report_type": "performance_dashboard",
+        "include_charts": true,
+        "executive_summary": true
+      }
+    }
+  }
+}

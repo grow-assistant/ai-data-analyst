@@ -1,0 +1,75 @@
+{
+  "session_id": "sid_09c64bb784d14778997a373752201d1f",
+  "created_at": "2025-07-19T17:53:57.867430",
+  "last_updated": "2025-07-19T17:53:57.867430",
+  "history": [
+    {
+      "event_id": "evt_763c18701b8a43b48a28c04f519d7f88",
+      "event_type": "session_created",
+      "timestamp": "2025-07-19T17:53:57.867430",
+      "details": {
+        "metadata": {
+          "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+          "pipeline_config": {
+            "analysis_config": {
+              "focus_areas": [
+                "time_series_analysis",
+                "seasonal_patterns",
+                "growth_trends"
+              ],
+              "metrics": [
+                "revenue",
+                "units_sold"
+              ],
+              "time_dimension": "date",
+              "trend_analysis": true
+            },
+            "rootcause_config": {
+              "investigate_trends": true,
+              "trend_threshold": 0.1
+            },
+            "report_config": {
+              "report_type": "trend_analysis",
+              "include_forecasts": true,
+              "time_series_charts": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "state": {
+    "data_handles": {},
+    "user_preferences": {},
+    "intermediate_results": {},
+    "current_step": null,
+    "error_log": []
+  },
+  "metadata": {
+    "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+    "pipeline_config": {
+      "analysis_config": {
+        "focus_areas": [
+          "time_series_analysis",
+          "seasonal_patterns",
+          "growth_trends"
+        ],
+        "metrics": [
+          "revenue",
+          "units_sold"
+        ],
+        "time_dimension": "date",
+        "trend_analysis": true
+      },
+      "rootcause_config": {
+        "investigate_trends": true,
+        "trend_threshold": 0.1
+      },
+      "report_config": {
+        "report_type": "trend_analysis",
+        "include_forecasts": true,
+        "time_series_charts": true
+      }
+    }
+  }
+}

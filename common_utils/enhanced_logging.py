@@ -83,10 +83,13 @@ class ContextualLogger:
         self.logger = logging.getLogger(name)
         self.name = name
     
-    def _log_with_context(self, level: int, message: str, **kwargs):
+    def _log_with_context(self, log_level: int, message: str, **kwargs):
         """Log with current context and additional keyword arguments."""
         # Add kwargs to the log record as extra fields
         extra = kwargs.copy()
+        
+        # Remove any conflicting parameter names
+        extra.pop('level', None)  # Remove 'level' if it exists in kwargs
         
         # Add correlation ID if available
         context = getattr(_context, 'data', {})
@@ -101,7 +104,7 @@ class ContextualLogger:
         if 'agent_name' in context:
             extra['agent_name'] = context['agent_name']
         
-        self.logger.log(level, message, extra=extra)
+        self.logger.log(log_level, message, extra=extra)
     
     def debug(self, message: str, **kwargs):
         self._log_with_context(logging.DEBUG, message, **kwargs)

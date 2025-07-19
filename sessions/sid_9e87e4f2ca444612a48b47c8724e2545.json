@@ -1,0 +1,31 @@
+{
+  "session_id": "sid_9e87e4f2ca444612a48b47c8724e2545",
+  "created_at": "2025-07-19T18:04:05.351235",
+  "last_updated": "2025-07-19T18:04:05.351235",
+  "history": [
+    {
+      "event_id": "evt_ff2258d18df147289d6a19686099204a",
+      "event_type": "session_created",
+      "timestamp": "2025-07-19T18:04:05.351235",
+      "details": {
+        "metadata": {
+          "test": "session_management",
+          "framework": "ai_data_analyst",
+          "user_id": "test_user"
+        }
+      }
+    }
+  ],
+  "state": {
+    "data_handles": {},
+    "user_preferences": {},
+    "intermediate_results": {},
+    "current_step": null,
+    "error_log": []
+  },
+  "metadata": {
+    "test": "session_management",
+    "framework": "ai_data_analyst",
+    "user_id": "test_user"
+  }
+}
