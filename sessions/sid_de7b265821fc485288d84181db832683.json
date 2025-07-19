@@ -1,0 +1,111 @@
+{
+  "session_id": "sid_de7b265821fc485288d84181db832683",
+  "created_at": "2025-07-19T17:54:10.453563",
+  "last_updated": "2025-07-19T17:54:10.453563",
+  "history": [
+    {
+      "event_id": "evt_890bbf628fdd48e0ab45c16d80ef2271",
+      "event_type": "session_created",
+      "timestamp": "2025-07-19T17:54:10.453563",
+      "details": {
+        "metadata": {
+          "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+          "pipeline_config": {
+            "analysis_config": {
+              "focus_areas": [
+                "discount_analysis",
+                "profitability_impact",
+                "correlation_analysis"
+              ],
+              "metrics": [
+                "revenue",
+                "units_sold",
+                "discount_rate"
+              ],
+              "correlations": [
+                [
+                  "discount_rate",
+                  "revenue"
+                ],
+                [
+                  "discount_rate",
+                  "units_sold"
+                ]
+              ],
+              "segmentation": [
+                "region",
+                "product"
+              ]
+            },
+            "rootcause_config": {
+              "investigate_correlations": true,
+              "focus_metric": "revenue",
+              "driver_candidates": [
+                "discount_rate",
+                "region",
+                "product"
+              ]
+            },
+            "report_config": {
+              "report_type": "impact_analysis",
+              "include_recommendations": true,
+              "correlation_charts": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "state": {
+    "data_handles": {},
+    "user_preferences": {},
+    "intermediate_results": {},
+    "current_step": null,
+    "error_log": []
+  },
+  "metadata": {
+    "file_path": "C:\\Main\\GIT\\adk-samples\\python\\agents\\test_data\\sales_data_small.csv",
+    "pipeline_config": {
+      "analysis_config": {
+        "focus_areas": [
+          "discount_analysis",
+          "profitability_impact",
+          "correlation_analysis"
+        ],
+        "metrics": [
+          "revenue",
+          "units_sold",
+          "discount_rate"
+        ],
+        "correlations": [
+          [
+            "discount_rate",
+            "revenue"
+          ],
+          [
+            "discount_rate",
+            "units_sold"
+          ]
+        ],
+        "segmentation": [
+          "region",
+          "product"
+        ]
+      },
+      "rootcause_config": {
+        "investigate_correlations": true,
+        "focus_metric": "revenue",
+        "driver_candidates": [
+          "discount_rate",
+          "region",
+          "product"
+        ]
+      },
+      "report_config": {
+        "report_type": "impact_analysis",
+        "include_recommendations": true,
+        "correlation_charts": true
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "total_scenarios": 3,
+  "successful_scenarios": 0,
+  "failed_scenarios": 3,
+  "success_rate": 0.0,
+  "total_duration": 32.11378002166748,
+  "average_duration": 10.704593340555826,
+  "detailed_results": [
+    {
+      "scenario": "sales_performance_analysis",
+      "status": "error",
+      "duration_seconds": 11.080615282058716,
+      "session_id": "sid_22b60ba88d0e4c00ab44e03084b218c5",
+      "stages_completed": 0,
+      "total_stages": 0,
+      "final_report_handle": null,
+      "investigation_handle": null,
+      "pipeline_summary": {},
+      "timestamp": "2025-07-19T10:53:55.866517"
+    },
+    {
+      "scenario": "sales_trend_analysis",
+      "status": "error",
+      "duration_seconds": 10.566027879714966,
+      "session_id": "sid_09c64bb784d14778997a373752201d1f",
+      "stages_completed": 0,
+      "total_stages": 0,
+      "final_report_handle": null,
+      "investigation_handle": null,
+      "pipeline_summary": {},
+      "timestamp": "2025-07-19T10:54:08.433458"
+    },
+    {
+      "scenario": "discount_impact_investigation",
+      "status": "error",
+      "duration_seconds": 10.467136859893799,
+      "session_id": "sid_de7b265821fc485288d84181db832683",
+      "stages_completed": 0,
+      "total_stages": 0,
+      "final_report_handle": null,
+      "investigation_handle": null,
+      "pipeline_summary": {},
+      "timestamp": "2025-07-19T10:54:20.920700"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "total_tests": 1,
+  "successful_tests": 1,
+  "failed_tests": 0,
+  "success_rate": 1.0,
+  "total_duration": 0.0054585933685302734,
+  "average_duration": 0.0054585933685302734,
+  "detailed_results": [
+    {
+      "test": "enhanced_logging",
+      "status": "completed",
+      "duration_seconds": 0.0054585933685302734,
+      "observability_enabled": true,
+      "timestamp": "2025-07-19T11:02:23.783688"
+    }
+  ]
+}
