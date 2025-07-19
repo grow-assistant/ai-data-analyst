@@ -162,6 +162,12 @@ agents:
       max_memory_mb: 1024
       max_cpu_percent: 75
 
+  data_cleaning_tool_server:
+    name: "Data Cleaning Tool Server"
+    host: "localhost"
+    port: 11008
+    description: "MCP server hosting data cleaning tools."
+
   data_enrichment:
     name: "Data Enrichment Agent"
     host: "localhost"

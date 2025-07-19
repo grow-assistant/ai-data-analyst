@@ -28,6 +28,19 @@ class OrchestratorA2AClient:
         self.a2a_client = A2AClient()
         self.circuit_manager = get_circuit_breaker_manager()
         
+        # Initialize security for inter-agent calls
+        try:
+            from common_utils.security import security_manager
+            self.security_manager = security_manager
+            self.orchestrator_api_key = self.security_manager.get_agent_api_key("orchestrator")
+            if not self.orchestrator_api_key:
+                self.orchestrator_api_key = self.security_manager.register_agent_api_key("orchestrator")
+            logger.info("A2A Client security initialized")
+        except Exception as e:
+            logger.warning(f"Failed to initialize A2A Client security: {e}")
+            self.security_manager = None
+            self.orchestrator_api_key = None
+        
         # Load agent endpoints from configuration
         try:
             from common_utils import get_agent_endpoints

@@ -1,0 +1,81 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # AI Data Analyst Agents
+  - job_name: 'data-loader'
+    static_configs:
+      - targets: ['data-loader:10006']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'data-cleaning'
+    static_configs:
+      - targets: ['data-cleaning:10008']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'data-cleaning-tools'
+    static_configs:
+      - targets: ['data-cleaning-tools:11008']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'data-enrichment'
+    static_configs:
+      - targets: ['data-enrichment:10009']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'data-analyst'
+    static_configs:
+      - targets: ['data-analyst:10007']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'rootcause-analyst'
+    static_configs:
+      - targets: ['rootcause-analyst:10011']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'presentation'
+    static_configs:
+      - targets: ['presentation:10010']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'schema-profiler'
+    static_configs:
+      - targets: ['schema-profiler:10012']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  - job_name: 'orchestrator'
+    static_configs:
+      - targets: ['orchestrator:10005']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # OpenTelemetry Collector
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8888']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093 

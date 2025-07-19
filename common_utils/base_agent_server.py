@@ -196,10 +196,26 @@ class BaseAgentServer:
                     if not api_key and credentials:
                         api_key = credentials.credentials
                     
+                    # Check client IP to determine if this is internal communication
+                    client_ip = request.client.host if request.client else "unknown"
+                    is_internal = client_ip in ["127.0.0.1", "localhost", "::1"]
+                    
                     if api_key:
-                        if not self.security_manager.validate_api_key(api_key):
+                        agent_id = self.security_manager.validate_api_key(api_key)
+                        if not agent_id:
                             raise HTTPException(status_code=401, detail="Invalid API key")
-                    # For now, allow requests without API key for internal communication
+                        
+                        # Validate inter-agent request
+                        target_resource = f"agent:{self.agent.agent_name}:{method}"
+                        is_valid = await self.security_manager.validate_inter_agent_request(
+                            api_key, agent_id, target_resource
+                        )
+                        if not is_valid:
+                            raise HTTPException(status_code=403, detail="Unauthorized inter-agent request")
+                    elif not is_internal:
+                        # For external requests, require authentication
+                        raise HTTPException(status_code=401, detail="API key required for external requests")
+                    # Internal requests without API key are allowed for backward compatibility
                 
                 # Parse JSON-RPC request
                 request_data = await request.json()
