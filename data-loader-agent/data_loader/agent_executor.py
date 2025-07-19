@@ -379,5 +379,25 @@ class EnhancedDataLoaderExecutor:
         
         return df
 
+    async def load_dataset_skill(self, **kwargs) -> Dict[str, Any]:
+        """Backward compatibility skill for legacy A2A calls."""
+        # Convert old parameters to new format
+        file_path = kwargs.get('file_path')
+        file_type = kwargs.get('file_type', 'auto')
+        
+        # Call new load_data_skill
+        result = await self.load_data_skill(file_path, file_type)
+        
+        # Convert response format for backward compatibility
+        if result.get('status') == 'completed':
+            return {
+                "status": "completed",
+                "data_handle_id": result["data_handle_id"],
+                "metadata": result["metadata"],
+                "message": f"Successfully loaded data using enhanced loader",
+                "data_preview": []  # Legacy field
+            }
+        return result
+
 # Maintain backward compatibility
 DataLoaderAgentExecutor = EnhancedDataLoaderExecutor 

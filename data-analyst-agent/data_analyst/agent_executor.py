@@ -115,6 +115,33 @@ class EnhancedDataAnalystExecutor:
                 "traceback": traceback.format_exc()
             }
 
+    async def analyze_dataset_skill(self, **kwargs: Any) -> Dict[str, Any]:
+        """
+        A2A skill wrapper for backward compatibility.
+        Maps the old 'analyze_dataset' to the new 'comprehensive_analysis_skill'.
+        """
+        logger.warning("Using deprecated 'analyze_dataset' skill. Please switch to 'comprehensive_analysis'.")
+        
+        # Convert old parameters to new format
+        analysis_config = {}
+        if 'analysis_type' in kwargs:
+            analysis_config['analysis_type'] = kwargs['analysis_type']
+        
+        # Call comprehensive analysis with config
+        result = await self.comprehensive_analysis_skill(
+            kwargs.get('data_handle_id'), 
+            analysis_config
+        )
+        
+        # Return in old format for compatibility
+        if result.get('status') == 'completed':
+            return {
+                "status": "completed",
+                "analysis_data_handle_id": result["analysis_data_handle_id"],
+                "results": {"summary": "Analysis completed using enhanced comprehensive analysis"}
+            }
+        return result
+
     def _auto_detect_parameters(self, df: pd.DataFrame, config: Dict[str, Any]) -> Dict[str, Any]:
         """Auto-detect analysis parameters from the dataset."""
         params = {

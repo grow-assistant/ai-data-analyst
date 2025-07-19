@@ -141,44 +141,118 @@ agents:
       max_data_points: 500000
       max_analysis_time_seconds: 300
 
-  data-analyst-agent:
-    name: data-analyst-agent
-    description: "An agent that can perform data analysis."
-    tools:
-      - "python"
-      - "data_analysis"
-  data-cleaning-agent:
-    name: data-cleaning-agent
-    description: "An agent that can clean and preprocess data."
-    tools:
-      - "handle_missing_values"
-      - "remove_outliers"
-      - "standardize_date_column"
-  data-enrichment-agent:
-    name: data-enrichment-agent
-    description: "An agent that can enrich data with external context."
-    tools:
-      - "fetch_external_data"
-      - "merge_datasets"
-      - "calculate_moving_average"
-  presentation-agent:
-    name: presentation-agent
-    description: "An agent that can create reports and visualizations."
-    tools:
-      - "create_line_chart"
-      - "generate_narrative"
-      - "compile_html_report"
+  data_cleaning:
+    name: "Data Cleaning Agent"
+    host: "localhost"
+    port: 10008
+    module_path: "data_cleaning_agent"
+    description: "An agent that can clean and preprocess data"
+    
+    features:
+      missing_value_handling: true
+      outlier_removal: true
+      data_standardization: true
+      
+    timeouts:
+      startup: 30
+      health_check: 10
+      data_processing: 120
+      
+    resources:
+      max_memory_mb: 1024
+      max_cpu_percent: 75
+
+  data_enrichment:
+    name: "Data Enrichment Agent"
+    host: "localhost"
+    port: 10009
+    module_path: "data_enrichment_agent"
+    description: "An agent that can enrich data with external context"
+    
+    features:
+      external_data_fetch: true
+      data_merging: true
+      moving_averages: true
+      
+    timeouts:
+      startup: 30
+      health_check: 10
+      data_processing: 180
+      
+    resources:
+      max_memory_mb: 1024
+      max_cpu_percent: 75
+
+  presentation:
+    name: "Presentation Agent"
+    host: "localhost"
+    port: 10010
+    module_path: "presentation_agent"
+    description: "An agent that can create reports and visualizations"
+    
+    features:
+      chart_generation: true
+      narrative_generation: true
+      html_reports: true
+      gemini_ai_support: true
+      
+    timeouts:
+      startup: 30
+      health_check: 10
+      report_generation: 180
+      
+    resources:
+      max_memory_mb: 1024
+      max_cpu_percent: 75
 
   rootcause_analyst_agent:
+    name: "RootCause Analyst Agent"
+    host: "localhost" 
     port: 10011
+    module_path: "rootcause_analyst"
+    description: "AI-powered root cause analysis with Why-Bot"
     enabled: true
-    # Add any other agent-specific config here
+    
+    features:
+      ai_hypothesis_generation: true
+      statistical_testing: true
+      variance_decomposition: true
+      causal_inference: true
+      
+    timeouts:
+      startup: 30
+      health_check: 10
+      analysis_execution: 300
+      
+    resources:
+      max_memory_mb: 2048
+      max_cpu_percent: 80
 
   schema_profiler_agent:
+    name: "Schema Profiler Agent"
+    host: "localhost"
     port: 10012
+    module_path: "schema_profiler"
+    description: "Intelligent data profiling and schema analysis"
     enabled: true
-    watch_directory: "watched_datasets"
-    output_directory: "dataset_profiles"
+    
+    features:
+      ai_profiling: true
+      schema_comparison: true
+      column_statistics: true
+      
+    timeouts:
+      startup: 30
+      health_check: 10
+      profiling_execution: 120
+      
+    resources:
+      max_memory_mb: 1024
+      max_cpu_percent: 70
+      
+    settings:
+      watch_directory: "watched_datasets"
+      output_directory: "dataset_profiles"
 
 # Database Configuration (if needed for future enhancements)
 database:
